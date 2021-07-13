@@ -34,7 +34,10 @@ def test_file_to_file():
     assert lr.util.valid_audio(y, mono=False)
 test_file_to_file()         
 os.remove('./temp.wav')
-
+import pydub
+sound = pydub.AudioSegment.from_wav("./output.wav")
+sound.export("final.mp3", format="mp3")
+os.remove('./output.wav')
 
 
 
