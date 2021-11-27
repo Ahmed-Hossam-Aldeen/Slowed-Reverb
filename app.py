@@ -53,6 +53,7 @@ class Ui(QtWidgets.QMainWindow):
             con= title+'-'+id+'.'+'mp3'
             conc=con.replace("|","_")
             full=ful.replace("|","_")
+            full2=ful2.replace("|","_")
             print(conc)
             ydl.download([link])
         os.rename("audio.mp3", "input.mp3")
@@ -90,7 +91,7 @@ class Ui(QtWidgets.QMainWindow):
         os.remove('./output.wav')
         #------------------------------------------------------------------------------#
         os.rename("final.mp3","%s"%full)
-        os.rename("input.mp3","%s"%ful2)
+        os.rename("input.mp3","%s"%full2)
         self.label2.hide()
         self.label.show()
 app = 0
