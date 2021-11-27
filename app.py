@@ -1,5 +1,5 @@
 from PyQt5 import QtGui, QtWidgets, uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget,QPushButton, QVBoxLayout, QFileDialog, QGraphicsView
+#from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget,QPushButton, QVBoxLayout, QFileDialog, QGraphicsView
 import sys
 from PyQt5.uic.properties import QtCore
 import numpy
@@ -22,6 +22,7 @@ class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('slowed.ui', self)
+        self.setWindowTitle("[Slow + Reverb]")	
         self.slow.clicked.connect(self.slowed)
         self.label.hide()
         self.show()
@@ -34,7 +35,7 @@ class Ui(QtWidgets.QMainWindow):
         self.label2.setHidden(False)
         link = self.link.text()
         ydl_opts = {
-            #'outtmpl': '/' + str(input) +'.%(mp3)s','format': 'bestaudio/best',
+            'outtmpl': "audio" +'.%(mp3)s','format': 'bestaudio/best',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -48,12 +49,13 @@ class Ui(QtWidgets.QMainWindow):
             title = info_dict.get('title', None)
             id=video_id = info_dict.get("id", None)
             ful= title+' '+"[slowed + reverb]"+'.'+'mp3'
+            ful2=title+'.'+'mp3'
             con= title+'-'+id+'.'+'mp3'
             conc=con.replace("|","_")
             full=ful.replace("|","_")
             print(conc)
             ydl.download([link])
-        os.rename('./%s'%conc, "input.mp3")
+        os.rename("audio.mp3", "input.mp3")
 
         #------------------------------------------------------------------------------#
         
@@ -88,6 +90,7 @@ class Ui(QtWidgets.QMainWindow):
         os.remove('./output.wav')
         #------------------------------------------------------------------------------#
         os.rename("final.mp3","%s"%full)
+        os.rename("input.mp3","%s"%ful2)
         self.label2.hide()
         self.label.show()
 app = 0
