@@ -1,14 +1,10 @@
 from PyQt5 import QtGui, QtWidgets, uic
-#from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget,QPushButton, QVBoxLayout, QFileDialog, QGraphicsView
 import sys
 from PyQt5.uic.properties import QtCore
 import numpy
-from scipy import signal 
 from scipy.io import wavfile
 import wave
-import os
 import numpy as np
-import matplotlib.pyplot as plt
 from pydub import AudioSegment
 import logging
 import librosa as lr
@@ -17,20 +13,40 @@ from pysndfx.dsp import AudioEffectsChain
 import pydub
 import youtube_dl
 import os
+from threading import *
+import time 
 
 class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('slowed.ui', self)
-        self.setWindowTitle("[Slow + Reverb]")	
-        self.slow.clicked.connect(self.slowed)
-        self.label.hide()
+        self.setWindowTitle("[Slow + Reverb]")
+        self.slow.clicked.connect(self.thread1)
+        self.slow.clicked.connect(self.thread2)
+        self.label.hide()    
+        self.label2.hide() 
         self.show()
     
     def trans_mp3_to_wav(filepath):
             song = AudioSegment.from_mp3(filepath)
             song.export("temp.wav", format="wav")
-
+            
+            
+    def thread1(self):
+        t1=Thread(target=self.slowed)
+        t1.start()
+        
+    def thread2(self):
+        t2=Thread(target=self.bar)
+        t2.start()    
+        self.label.hide() 
+        self.label2.show()
+        
+    def bar(self):   
+        for i in range(95):
+            time.sleep(0.2)
+            self.progressBar.setValue(i+1)
+        
     def slowed(self):
         self.label2.setHidden(False)
         link = self.link.text()
@@ -39,10 +55,7 @@ class Ui(QtWidgets.QMainWindow):
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '320',
-
-            }],
-        }
+                'preferredquality': '320',}],}
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(link, download=False)
@@ -94,6 +107,7 @@ class Ui(QtWidgets.QMainWindow):
         os.rename("input.mp3","%s"%full2)
         self.label2.hide()
         self.label.show()
+        self.progressBar.setValue(100)
 app = 0
 app = QtWidgets.QApplication(sys.argv)
 window = Ui()
